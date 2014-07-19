@@ -30,6 +30,7 @@ from urllib2 import URLError
 import mechanize
 import facebook
 import logging
+import socket
 
 APP_ID = '658559290891111'
 APP_SECRET = 'fa9f127e318b32062222054d533d5085'
@@ -64,6 +65,7 @@ def get_access_token():
 
     try:
         print '>> now submit !!!'
+        socket.setdefaulttimeout(3)
         br.submit()
     except URLError:
         pass
