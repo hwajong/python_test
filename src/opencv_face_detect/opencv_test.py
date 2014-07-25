@@ -40,5 +40,13 @@ def demo(in_fn, out_fn):
 
 
 if __name__ == '__main__':
-    demo('./opencv_face_detect/pic.jpg', './opencv_face_detect/pic.detect.jpg')
 
+    out = './opencv_face_detect/pic.detect.jpg'
+
+    demo('./opencv_face_detect/pic.jpg', out)
+
+    img = cv2.imread(out ,1)
+    cv2.imshow('out', img);
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
