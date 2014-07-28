@@ -30,6 +30,7 @@ from urllib2 import URLError
 import mechanize
 import facebook
 import logging
+import socket
 
 APP_ID = '658559290891111'
 APP_SECRET = 'fa9f127e318b32062222054d533d5085'
@@ -75,6 +76,7 @@ def get_access_token():
 
     try:
         print '>> now submit !!!'
+        socket.setdefaulttimeout(3)
         br.submit()
     except URLError:
         # mechanize 브라우저는 REDIRECT URL 로 접속 하려고 하지만 해당 서버는 없으므로 항상 URLError 가 발생한다 --> 무시.
