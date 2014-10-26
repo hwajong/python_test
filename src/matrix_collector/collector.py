@@ -83,7 +83,6 @@ for fname in glob.glob("*.out"):
 	if not check_mat(mat1, matrix_name, fname):
 		continue
 	
-
 	matrix_name = 'GEOMIN Rotated Factor Matrix'
 	mat2 = get_matrix(lines, matrix_name)
 	if not check_mat(mat2, matrix_name, fname):
