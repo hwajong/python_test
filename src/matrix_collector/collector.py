@@ -57,6 +57,16 @@ def get_matrix(lines, matrix_name, num_of_matrix=1):
 
 	return mat
 	
+'''
+해당 행렬이 없을경우 False 리턴
+'''
+def check_mat(mat, matrix_name, fname):
+	if not mat:
+		print('[%s] matrix does not exist! - skip %s') % (matrix_name, fname)
+		return False
+
+	return True
+
 
 # -------------
 # MAIN
@@ -68,22 +78,40 @@ for fname in glob.glob("*.out"):
 	lines = fi.readlines()
 	fi.close()
 
-	mat = get_matrix(lines, 'CF-VARIMAX Rotated Factor Matrix')
-	assert(mat)
-	fo.write(mat)
-
-	mat = get_matrix(lines, 'GEOMIN Rotated Factor Matrix')
-	assert(mat)
-	fo.write(mat)
+	matrix_name = 'CF-VARIMAX Rotated Factor Matrix'
+	mat1 = get_matrix(lines, matrix_name)
+	if not check_mat(mat1, matrix_name, fname):
+		continue
 	
-	index = find_index(lines, 'GEOMIN Rotated Factor Matrix')
+
+	matrix_name = 'GEOMIN Rotated Factor Matrix'
+	mat2 = get_matrix(lines, matrix_name)
+	if not check_mat(mat2, matrix_name, fname):
+		continue
+	
+	index = find_index(lines, matrix_name)
 	assert(index != -1)
 
-	mat = get_matrix(lines[index:], 'Factor Correlations')
-	assert(mat)
-	fo.write(mat)
+	matrix_name = 'Factor Correlations'
+	mat3 = get_matrix(lines[index:], matrix_name)
+	if not check_mat(mat3, matrix_name, fname):
+		continue
 
-	mat = get_matrix(lines, 'Standard Errors after Rotation', 2)
-	assert(mat)
-	fo.write(mat)
+	matrix_name = 'Standard Errors after Rotation'
+	mat4 = get_matrix(lines, matrix_name, 2)
+	if not check_mat(mat4, matrix_name, fname):
+		continue
+
+	fo.write(mat1)
+	fo.write(mat2)
+	fo.write(mat3)
+	fo.write(mat4)
+
+		
+
+
+
+
+
+
 
