@@ -18,7 +18,7 @@ def find_index(lines, find_str):
 '''
 행렬값을 파싱해 정해진 포맷스트링으로 리턴
 '''
-def parse_matrix(lines):
+def parse_matrix(lines, ignore_column):
 	mat = ''
 	for s in lines:
 		s = s.strip()
@@ -27,8 +27,9 @@ def parse_matrix(lines):
 		if not s:
 			break
 
-		# 첫째 열은 버린다(row name)
-		row_list = s.split()[1:]
+		# ignore_column 을 버린다 (default 1 : column name)
+		row_list = s.split()
+		row_list = filter(lambda x: row_list.index(x) not in ignore_column , row_list)
 		fmt = "%8.8s" * len(row_list)
 		row = fmt % tuple(row_list)
 		mat += (row + '\n')
@@ -39,20 +40,20 @@ def parse_matrix(lines):
 '''
 lines 리스트에서 matrix_name 행렬값 string 을 리턴한다.
 '''
-def get_matrix(lines, matrix_name, num_of_matrix=1):
+def get_matrix(lines, matrix_name, num_of_matrix=1, skip_header=4, ignore_column=[0]):
 	index = find_index(lines, matrix_name)
 	
 	if index == -1:
 		return ''
 
-	# title 다음 4째줄 부터 매트릭스 값이 나온다.
-	# 3번째 줄은 헤더 
-	mat = parse_matrix(lines[index+4:])
+	# title 다음 skip_header 째줄 부터 매트릭스 값이 나온다.
+	# 헤더는 버림 
+	mat = parse_matrix(lines[index+skip_header:], ignore_column)
 
 	# 행렬이 2개 일때 
 	if num_of_matrix == 2:
 		mat_lines = len(mat.splitlines())
-		mat2 = parse_matrix(lines[index+4+mat_lines+2:])
+		mat2 = parse_matrix(lines[index+skip_header+mat_lines+2:], ignore_column)
 		mat += mat2
 
 	return mat
@@ -79,38 +80,25 @@ for fname in glob.glob("*.out"):
 	fi.close()
 
 	matrix_name = 'CF-VARIMAX Rotated Factor Matrix'
-	mat1 = get_matrix(lines, matrix_name)
+	mat1 = get_matrix(lines, matrix_name, skip_header=5, ignore_column=[0])
 	if not check_mat(mat1, matrix_name, fname):
-		continue
-	
-	matrix_name = 'GEOMIN Rotated Factor Matrix'
-	mat2 = get_matrix(lines, matrix_name)
-	if not check_mat(mat2, matrix_name, fname):
 		continue
 	
 	index = find_index(lines, matrix_name)
 	assert(index != -1)
 
 	matrix_name = 'Factor Correlations'
-	mat3 = get_matrix(lines[index:], matrix_name)
-	if not check_mat(mat3, matrix_name, fname):
+	mat2 = get_matrix(lines[index:], matrix_name)
+	if not check_mat(mat2, matrix_name, fname):
 		continue
 
 	matrix_name = 'Standard Errors after Rotation'
-	mat4 = get_matrix(lines, matrix_name, 2)
-	if not check_mat(mat4, matrix_name, fname):
+	mat3 = get_matrix(lines, matrix_name, num_of_matrix=2)
+	if not check_mat(mat3, matrix_name, fname):
 		continue
 
 	fo.write(mat1)
 	fo.write(mat2)
 	fo.write(mat3)
-	fo.write(mat4)
-
 		
-
-
-
-
-
-
 
