@@ -29,7 +29,7 @@ def parse_matrix(lines, ignore_column):
 
 		# ignore_column 을 버린다 (default 1 : column name)
 		row_list = s.split()
-		row_list = filter(lambda x: row_list.index(x) not in ignore_column , row_list)
+		row_list = [row_list[i] for i in range(len(row_list)) if i not in ignore_column]
 		fmt = "%8.8s" * len(row_list)
 		row = fmt % tuple(row_list)
 		mat += (row + '\n')
